@@ -7,19 +7,19 @@ public class ReportingStructure {
     public ReportingStructure() {
     }
 
-    Employee getEmployee() {
+    public Employee getEmployee() {
         return this.employee;
     }
 
-    void setEmployee(Employee employee) {
+    public void setEmployee(Employee employee) {
         this.employee = employee;
     }
 
-    int getNumberOfReports() {
+    public int getNumberOfReports() {
         return this.numberOfReports;
     }
 
-    void setNumberOfReports(int numberOfReports) {
+    public void setNumberOfReports(int numberOfReports) {
         this.numberOfReports = numberOfReports;
     }
 }
