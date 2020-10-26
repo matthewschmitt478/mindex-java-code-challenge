@@ -19,7 +19,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee create(Employee employee) {
-        LOG.debug("Creating employee [{}]", employee);
+        LOG.debug("Creating employee with id [{}]", employee);
 
         employee.setEmployeeId(UUID.randomUUID().toString());
         employeeRepository.insert(employee);

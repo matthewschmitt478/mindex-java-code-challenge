@@ -34,8 +34,6 @@ public class ReportServiceImpl implements ReportService {
 
         int count = getAllReports(employee);
 
-        LOG.debug("Count = [{}]", count);
-
         reportingStructure.setNumberOfReports(count);
 
         return reportingStructure;

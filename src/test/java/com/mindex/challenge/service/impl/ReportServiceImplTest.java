@@ -1,5 +1,6 @@
 package com.mindex.challenge.service.impl;
 
+import com.mindex.challenge.dao.EmployeeRepository;
 import com.mindex.challenge.data.Employee;
 import com.mindex.challenge.data.ReportingStructure;
 import com.mindex.challenge.service.EmployeeService;
@@ -13,6 +14,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -20,12 +23,12 @@ import static org.junit.Assert.assertNotNull;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ReportServiceImplTest {
 
-    private String employeeUrl;
-    private String employeeIdUrl;
-    private String reportUrl;
+    private static final String TEST_EMPLOYEE_ID = "16a596ae-edd3-4847-99fe-c4518e82c86f";
 
     @Autowired
-    private ReportService reportService;
+    private EmployeeRepository employeeRepository;
+    private String reportUrl;
+
     @Autowired
     private EmployeeService employeeService;
 
@@ -37,26 +40,26 @@ public class ReportServiceImplTest {
 
     @Before
     public void setup() {
-        employeeUrl = "http://localhost:" + port + "/employee";
-        employeeIdUrl = "http://localhost:" + port + "/employee/{id}";
-        reportUrl = "http://localhost:" + port + "/report/employee/{id}";
+        reportUrl = "http://localhost:" + port + "report/employee/{id}";
     }
 
     @Test
     public void testCreate() {
-        Employee testEmployee = new Employee();
-        testEmployee.setFirstName("John");
-        testEmployee.setLastName("Doe");
-        testEmployee.setDepartment("Engineering");
-        testEmployee.setPosition("Developer");
+        Employee testEmployee = employeeRepository.findByEmployeeId(TEST_EMPLOYEE_ID);
 
-        Employee createdEmployee = restTemplate.postForEntity(employeeUrl, testEmployee, Employee.class).getBody();
+        ReportingStructure testReportingStructure = new ReportingStructure();
+        testReportingStructure.setEmployee(testEmployee);
+        testReportingStructure.setNumberOfReports(2);
 
-        // TODO
+        // Read checks
+        ReportingStructure reportingStructure = restTemplate.getForEntity(reportUrl, ReportingStructure.class, testEmployee.getEmployeeId()).getBody();
+        assert reportingStructure != null;
+        assertEquals(reportingStructure.getEmployee().getEmployeeId(), testEmployee.getEmployeeId());
+        assertReportingStructureEquivalence(testReportingStructure, reportingStructure);
     }
 
     private static void assertReportingStructureEquivalence(ReportingStructure expected, ReportingStructure actual) {
-        assertEquals(expected.getEmployee(), actual.getEmployee());
+        assertEquals(expected.getEmployee().getEmployeeId(), actual.getEmployee().getEmployeeId());
         assertEquals(expected.getNumberOfReports(), actual.getNumberOfReports());
     }
 }
